@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chef Nevera 🍅</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍅</text></svg>">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Chef Nevera 👨‍🍳</title>
     <style>
         :root {
-            --primary: #FF5E62;
-            --secondary: #FF9966;
-            --bg: #F0F2F5;
-            --dark: #2D3436;
-            --text-muted: #636E72;
+            --primary: #4CAF50;
+            --secondary: #2196F3;
+            --bg: #1A1A1A;
+            --card-bg: #2D2D2D;
+            --text: #FFFFFF;
+            --text-muted: #B0B0B0;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg);
-            color: var(--dark);
+            color: var(--text);
             height: 100dvh;
             display: flex;
             flex-direction: column;
@@ -46,22 +45,18 @@
 
         header {
             text-align: center;
-            padding: 15px 0 10px 0;
-            background: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 20px 0;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
         h1 {
-            color: var(--primary);
-            font-size: 1.8rem;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
             font-weight: 800;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
 
         /* Pantallas */
@@ -81,24 +76,24 @@
 
         /* Home Screen */
         .welcome-card {
-            background: white;
-            padding: 25px;
+            background-color: var(--card-bg);
+            padding: 30px;
             border-radius: 20px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            margin: 10px 0 20px 0;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .welcome-card i {
-            font-size: 3.5rem;
-            color: var(--secondary);
-            margin-bottom: 15px;
+        .welcome-card h2 {
+            margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .welcome-card p {
             color: var(--text-muted);
-            margin-top: 10px;
-            line-height: 1.5;
+            line-height: 1.6;
+            margin-bottom: 20px;
         }
 
         .photo-btn {
@@ -111,12 +106,12 @@
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.3);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+            transition: transform 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            transition: transform 0.2s;
+            gap: 10px;
         }
 
         .photo-btn:active {
@@ -136,7 +131,7 @@
             border-radius: 12px;
             overflow: hidden;
             aspect-ratio: 4/3;
-            background: #e0e0e0;
+            background: #333;
         }
 
         .image-card img {
@@ -149,7 +144,7 @@
             position: absolute;
             top: 5px;
             right: 5px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.7);
             color: white;
             border: none;
             width: 28px;
@@ -159,18 +154,17 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            font-weight: bold;
         }
 
         .add-more-card {
-            border: 2px dashed #b2bec3;
+            border: 2px dashed #555;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             color: var(--text-muted);
             font-size: 0.9rem;
             cursor: pointer;
-            gap: 5px;
         }
 
         .action-buttons {
@@ -179,9 +173,8 @@
         }
 
         .secondary-btn {
-            background: white;
-            color: var(--dark);
-            border: 1px solid #dfe6e9;
+            background: #333;
+            border: 1px solid #444;
             flex: 1;
         }
 
@@ -198,7 +191,7 @@
         .spinner {
             width: 50px;
             height: 50px;
-            border: 5px solid #dfe6e9;
+            border: 5px solid #333;
             border-top: 5px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -220,36 +213,37 @@
         .tag-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
             margin-bottom: 20px;
         }
 
         .tag {
-            background: #dfe6e9;
-            padding: 5px 12px;
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--dark);
+            font-size: 0.9rem;
             font-weight: 500;
         }
 
         .recipe-card {
-            background: white;
+            background-color: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid rgba(255,255,255,0.03);
         }
 
         .recipe-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: 700;
-            color: var(--dark);
-            margin-bottom: 5px;
+            color: var(--text);
+            margin-bottom: 8px;
         }
 
         .recipe-meta {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             margin-bottom: 15px;
             display: flex;
@@ -257,48 +251,14 @@
         }
 
         .steps-list {
-            padding-left: 18px;
-            color: #4b5563;
+            padding-left: 20px;
+            color: var(--text-muted);
             font-size: 0.95rem;
         }
 
         .steps-list li {
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .more-recipes-btn {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .floating-action {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.4);
-            cursor: pointer;
-            border: none;
+            margin-bottom: 10px;
+            line-height: 1.5;
         }
 
         /* Ocultar input nativo */
@@ -308,7 +268,7 @@
 <body>
 
     <header>
-        <h1><i class="fa-solid fa-utensils"></i> Chef Nevera</h1>
+        <h1>Chef Nevera 👨‍🍳</h1>
     </header>
 
     <div class="scroll-container">
@@ -318,25 +278,20 @@
 
             <div id="screen-home" class="screen active">
                 <div class="welcome-card">
-                    <i class="fa-solid fa-camera-retro"></i>
                     <h2>¿No sabes qué cocinar?</h2>
                     <p>Saca fotos de tu nevera o despensa y la Inteligencia Artificial te dirá qué preparar.</p>
+                    <button class="photo-btn" onclick="triggerUpload()">
+                        📸 Sacar / Subir Fotos
+                    </button>
                 </div>
-                <button class="photo-btn" onclick="triggerUpload()">
-                    <i class="fa-solid fa-camera"></i> Sacar / Subir Fotos
-                </button>
             </div>
 
             <div id="screen-preview" class="screen">
                 <div class="images-grid" id="previewGrid">
                     </div>
                 <div class="action-buttons">
-                    <button class="photo-btn secondary-btn" onclick="resetApp()">
-                        <i class="fa-solid fa-trash"></i> Borrar
-                    </button>
-                    <button class="photo-btn primary-btn" onclick="analyzeImages()">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> ¡Generar Recetas!
-                    </button>
+                    <button class="photo-btn secondary-btn" onclick="resetApp()">🗑️ Borrar</button>
+                    <button class="photo-btn primary-btn" onclick="analyzeImages()">✨ ¡Generar Recetas!</button>
                 </div>
             </div>
 
@@ -349,29 +304,21 @@
             </div>
 
             <div id="screen-results" class="screen">
-                <h3 style="margin-bottom: 10px;">Ingredientes detectados:</h3>
+                <h3 style="margin-bottom: 10px; color: var(--text-muted);">Ingredientes detectados:</h3>
                 <div class="tag-list" id="detectedIngredients">
                     </div>
 
-                <h3 style="margin-bottom: 10px;">Recetas sugeridas:</h3>
+                <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Recetas sugeridas:</h3>
                 <div id="recipesContainer">
                     </div>
 
-                <button class="more-recipes-btn" id="btnMoreRecipes" onclick="loadMoreRecipes()">
-                    <i class="fa-solid fa-rotate-right"></i> Dame otras recetas
-                </button>
-
-                <button class="photo-btn" onclick="resetApp()">
-                    <i class="fa-solid fa-arrow-left"></i> Volver a empezar
+                <button class="photo-btn" onclick="resetApp()" style="margin-top: 20px;">
+                    ⬅️ Volver a empezar
                 </button>
             </div>
 
         </div>
     </div>
-
-    <button class="floating-action" id="floatingBtn" style="display: none;" onclick="resetApp()">
-        <i class="fa-solid fa-camera"></i>
-    </button>
 
     <script>
         // --- Estado de la App ---
@@ -389,9 +336,6 @@
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${screenId}`).classList.add('active');
-            
-            // Mostrar u ocultar botón flotante
-            document.getElementById('floatingBtn').style.display = (screenId === 'results') ? 'flex' : 'none';
         }
 
         function triggerUpload() {
@@ -433,7 +377,7 @@
                 card.className = 'image-card';
                 card.innerHTML = `
                     <img src="data:${img.mimeType};base64,${img.data}">
-                    <button class="remove-img-btn" onclick="removeImage(${index})"><i class="fa-solid fa-times"></i></button>
+                    <button class="remove-img-btn" onclick="removeImage(${index})">×</button>
                 `;
                 previewGrid.appendChild(card);
             });
@@ -441,7 +385,7 @@
             // Tarjeta de añadir más
             const addMore = document.createElement('div');
             addMore.className = 'image-card add-more-card';
-            addMore.innerHTML = `<i class="fa-solid fa-plus-circle font-size: 1.5rem"></i><span>Añadir más</span>`;
+            addMore.innerHTML = `<span>+ Añadir más</span>`;
             addMore.onclick = triggerUpload;
             previewGrid.appendChild(addMore);
         }
@@ -462,7 +406,7 @@
         }
 
         // --- LLAMADA A LA API DE VERCEL (PROXY) ---
-        async function fetchRecipesAndIngredients(isMore = false) {
+        async function fetchRecipesAndIngredients() {
             const messages = ["Procesando imágenes...", "Buscando ingredientes...", "Pensando combinaciones...", "Redactando recetas..."];
             let msgIdx = 0;
             const msgInterval = setInterval(() => {
@@ -481,18 +425,12 @@
                 }
               ]
             }`;
-            
-            if (isMore) {
-                promptContext = `A partir de los siguientes ingredientes: ${state.ingredients.join(', ')}. Devuelve UNICAMENTE un objeto JSON que contenga en la clave 'recipes' 3 NUEVAS recetas distintas con el mismo formato anterior.`;
-            }
 
             try {
                 let parts = [{ text: promptContext }];
-                if (!isMore) {
-                    state.images.forEach(img => {
-                        parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
-                    });
-                }
+                state.images.forEach(img => {
+                    parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
+                });
 
                 // Llamamos a nuestro propio servidor en Vercel
                 const response = await fetch('/api/analyze', {
@@ -508,9 +446,9 @@
 
                 const data = await response.json();
                 
-                // COMPROBACIÓN DE SEGURIDAD PARA EVITAR EL ERROR DE UNDEFINED
-                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                     throw new Error("La IA no detectó comida válida o no devolvió una respuesta correcta.");
+                // COMPROBACIÓN DE SEGURIDAD (PARCHE PARA EVITAR UNDEFINED)
+                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
+                     throw new Error("La IA no detectó comida válida o no devolvió una respuesta correcta. Prueba a sacar una foto más clara de los alimentos.");
                 }
 
                 const responseText = data.candidates[0].content.parts[0].text;
@@ -532,8 +470,12 @@
 
         // --- Acciones de Orquestación ---
         async function analyzeImages() {
+            if (state.images.length === 0) {
+                alert("Por favor, sube al menos una foto.");
+                return;
+            }
             showScreen('loading');
-            const result = await fetchRecipesAndIngredients(false);
+            const result = await fetchRecipesAndIngredients();
             
             if (result) {
                 state.ingredients = result.ingredients || [];
@@ -541,22 +483,6 @@
                 renderResults();
                 showScreen('results');
             }
-        }
-
-        async function loadMoreRecipes() {
-            const btn = document.getElementById('btnMoreRecipes');
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Pensando...`;
-            btn.disabled = true;
-
-            const result = await fetchRecipesAndIngredients(true);
-            
-            if (result && result.recipes) {
-                state.recipes = [...state.recipes, ...result.recipes];
-                renderResults();
-            }
-            
-            btn.innerHTML = `<i class="fa-solid fa-rotate-right"></i> Dame otras recetas`;
-            btn.disabled = false;
         }
 
         function renderResults() {
@@ -579,8 +505,8 @@
                 card.innerHTML = `
                     <div class="recipe-title">${recipe.title}</div>
                     <div class="recipe-meta">
-                        <span><i class="fa-solid fa-clock"></i> ${recipe.prep_time}</span>
-                        <span><i class="fa-solid fa-bowl-food"></i> Fácil</span>
+                        <span>⏱️ ${recipe.prep_time}</span>
+                        <span>🥣 Fácil</span>
                     </div>
                     <ol class="steps-list">
                         ${recipe.steps.map(step => `<li>${step}</li>`).join('')}
