@@ -30,7 +30,6 @@
             flex-direction: column;
         }
 
-        /* Contenedor principal para scroll */
         .scroll-container {
             flex: 1;
             overflow-y: auto;
@@ -48,6 +47,7 @@
             padding: 20px 0;
             background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative; /* Necesario para posicionar el logo LSF */
         }
 
         h1 {
@@ -59,7 +59,20 @@
             font-weight: 800;
         }
 
-        /* Pantallas */
+        /* LOGO LSF EN LA ESQUINA DERECHA */
+        .brand-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.8;
+        }
+
         .screen {
             display: none;
             animation: fadeIn 0.3s ease;
@@ -74,7 +87,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Home Screen */
         .welcome-card {
             background-color: var(--card-bg);
             padding: 30px;
@@ -118,7 +130,6 @@
             transform: scale(0.98);
         }
 
-        /* Preview Screen */
         .images-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -182,7 +193,6 @@
             flex: 2;
         }
 
-        /* Loading Screen */
         .loading-container {
             text-align: center;
             padding: 40px 20px;
@@ -209,7 +219,6 @@
             margin-top: 10px;
         }
 
-        /* Results Screen */
         .tag-list {
             display: flex;
             flex-wrap: wrap;
@@ -261,7 +270,6 @@
             line-height: 1.5;
         }
 
-        /* Ocultar input nativo */
         #fileInput { display: none; }
     </style>
 </head>
@@ -269,6 +277,7 @@
 
     <header>
         <h1>Chef Nevera 👨‍🍳</h1>
+        <div class="brand-logo">LSF</div>
     </header>
 
     <div class="scroll-container">
@@ -287,8 +296,7 @@
             </div>
 
             <div id="screen-preview" class="screen">
-                <div class="images-grid" id="previewGrid">
-                    </div>
+                <div class="images-grid" id="previewGrid"></div>
                 <div class="action-buttons">
                     <button class="photo-btn secondary-btn" onclick="resetApp()">🗑️ Borrar</button>
                     <button class="photo-btn primary-btn" onclick="analyzeImages()">✨ ¡Generar Recetas!</button>
@@ -305,12 +313,10 @@
 
             <div id="screen-results" class="screen">
                 <h3 style="margin-bottom: 10px; color: var(--text-muted);">Ingredientes detectados:</h3>
-                <div class="tag-list" id="detectedIngredients">
-                    </div>
+                <div class="tag-list" id="detectedIngredients"></div>
 
                 <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Recetas sugeridas:</h3>
-                <div id="recipesContainer">
-                    </div>
+                <div id="recipesContainer"></div>
 
                 <button class="photo-btn" onclick="resetApp()" style="margin-top: 20px;">
                     ⬅️ Volver a empezar
@@ -321,9 +327,8 @@
     </div>
 
     <script>
-        // --- Estado de la App ---
         let state = {
-            images: [], // { base64, mimeType }
+            images: [], 
             ingredients: [],
             recipes: []
         };
@@ -332,7 +337,6 @@
         const previewGrid = document.getElementById('previewGrid');
         const loadingSubtext = document.getElementById('loadingSubtext');
 
-        // --- Navegación de Pantallas ---
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(`screen-${screenId}`).classList.add('active');
@@ -342,32 +346,60 @@
             fileInput.click();
         }
 
-        // --- Manejo de Imágenes ---
+        // Sistema de auto-compresión para saltarse el tope de 4.5MB de Vercel
+        function compressImage(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+
+                        const MAX_SIZE = 1024;
+                        if (width > height) {
+                            if (width > MAX_SIZE) {
+                                height *= MAX_SIZE / width;
+                                width = MAX_SIZE;
+                            }
+                        } else {
+                            if (height > MAX_SIZE) {
+                                width *= MAX_SIZE / height;
+                                height = MAX_SIZE;
+                            }
+                        }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        resolve(compressedBase64);
+                    }
+                };
+            });
+        }
+
         fileInput.addEventListener('change', async (e) => {
             const files = Array.from(e.target.files);
             if (files.length === 0) return;
 
             for (let file of files) {
-                const base64Data = await fileToBase64(file);
+                const compressedBase64 = await compressImage(file);
                 state.images.push({
-                    mimeType: file.type,
-                    data: base64Data.split(',')[1] // Solo el string base64
+                    mimeType: 'image/jpeg',
+                    data: compressedBase64.split(',')[1] 
                 });
             }
 
             renderPreview();
             showScreen('preview');
-            fileInput.value = ''; // Limpiar input
+            fileInput.value = ''; 
         });
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
 
         function renderPreview() {
             previewGrid.innerHTML = '';
@@ -382,7 +414,6 @@
                 previewGrid.appendChild(card);
             });
 
-            // Tarjeta de añadir más
             const addMore = document.createElement('div');
             addMore.className = 'image-card add-more-card';
             addMore.innerHTML = `<span>+ Añadir más</span>`;
@@ -405,9 +436,8 @@
             showScreen('home');
         }
 
-        // --- LLAMADA A LA API DE VERCEL (PROXY) ---
         async function fetchRecipesAndIngredients() {
-            const messages = ["Procesando imágenes...", "Buscando ingredientes...", "Pensando combinaciones...", "Redactando recetas..."];
+            const messages = ["Reduciendo imagen...", "Buscando ingredientes...", "Pensando combinaciones...", "Redactando recetas..."];
             let msgIdx = 0;
             const msgInterval = setInterval(() => {
                 loadingSubtext.innerText = messages[++msgIdx % messages.length];
@@ -432,7 +462,6 @@
                     parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
                 });
 
-                // Llamamos a nuestro propio servidor en Vercel
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -446,14 +475,11 @@
 
                 const data = await response.json();
                 
-                // COMPROBACIÓN DE SEGURIDAD (PARCHE PARA EVITAR UNDEFINED)
                 if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
-                     throw new Error("La IA no detectó comida válida o no devolvió una respuesta correcta. Prueba a sacar una foto más clara de los alimentos.");
+                     throw new Error("La IA no detectó comida válida o no devolvió una respuesta correcta.");
                 }
 
                 const responseText = data.candidates[0].content.parts[0].text;
-                
-                // Limpiar posibles bloques de código que devuelva la IA por error
                 const cleanJson = responseText.replace(/```json\n?|```\n?/g, '').trim();
                 const aiResult = JSON.parse(cleanJson);
                 
@@ -468,7 +494,6 @@
             }
         }
 
-        // --- Acciones de Orquestación ---
         async function analyzeImages() {
             if (state.images.length === 0) {
                 alert("Por favor, sube al menos una foto.");
@@ -486,7 +511,6 @@
         }
 
         function renderResults() {
-            // Renderizar Ingredientes
             const tagsContainer = document.getElementById('detectedIngredients');
             tagsContainer.innerHTML = '';
             state.ingredients.forEach(ing => {
@@ -496,7 +520,6 @@
                 tagsContainer.appendChild(span);
             });
 
-            // Renderizar Recetas
             const recipesContainer = document.getElementById('recipesContainer');
             recipesContainer.innerHTML = '';
             state.recipes.forEach(recipe => {
