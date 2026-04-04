@@ -568,8 +568,8 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: parts }],
-                        generationConfig: { responseMimeType: "application/json" }
+                        contents: [{ parts: parts }]
+                        // Eliminamos generationConfig porque v1 estable de la API no soporta responseMimeType directamente aquí.
                     })
                 });
 
