@@ -3,465 +3,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chef Nevera 👨‍🍳</title>
+    <title>LSF Nevera Inteligente</title>
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍅</text></svg>">
+    
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍅</text></svg>">
+    
+    <meta name="mobile-web-app-capable" content="yes"> <meta name="apple-mobile-web-app-capable" content="yes"> <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d1117"> <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+    
     <style>
         :root {
-            --primary: #4CAF50;
-            --secondary: #2196F3;
-            --bg: #1A1A1A;
-            --card-bg: #2D2D2D;
-            --text: #FFFFFF;
-            --text-muted: #B0B0B0;
+            /* Colors */
+            --bg-color: #0d1117;
+            --bg-gradient: radial-gradient(circle at top right, #1f2b3e, #0d1117);
+            --primary: #10B981; /* Emerald/Mint Green */
+            --primary-hover: #34d399;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --surface: rgba(30, 41, 59, 0.6);
+            --surface-border: rgba(255, 255, 255, 0.08);
+            
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-blur: 16px;
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 8px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            height: 100dvh;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
-        .scroll-container {
+        h1, h2, h3, .logo-text { font-family: 'Outfit', sans-serif; }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: var(--glass-border);
+            border-radius: var(--radius-lg);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 24px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: var(--glass-border);
+        }
+
+        .header-title { font-size: 1.2rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), #059669);
+            border-radius: 14px;
+            box-shadow: 0 0 20px var(--primary-glow);
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+
+        main {
             flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            padding-bottom: 30px;
-        }
-
-        .container {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        header {
-            text-align: center;
-            padding: 20px 0;
-            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(33, 150, 243, 0.1));
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            position: relative; /* Necesario para posicionar el logo LSF */
-        }
-
-        h1 {
-            background: linear-gradient(135deg, #4CAF50, #2196F3);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2rem;
-            font-weight: 800;
-        }
-
-        /* LOGO LSF EN LA ESQUINA DERECHA */
-        .brand-logo {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            background: linear-gradient(135deg, #4CAF50, #2196F3);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            opacity: 0.8;
-        }
-
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
+        .screen { display: none; width: 100%; animation: fadeIn 0.4s ease-out forwards; }
+        .screen.active { display: flex; flex-direction: column; gap: 24px; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .welcome-card {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            margin: 20px 0;
-            border: 1px solid rgba(255,255,255,0.03);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        .hero { text-align: center; margin-bottom: 10px; }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .welcome-card h2 {
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
+        .hero p { color: var(--text-muted); font-size: 1rem; line-height: 1.5; }
 
-        .welcome-card p {
-            color: var(--text-muted);
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .photo-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            width: 100%;
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+            border: 2px dashed rgba(16, 185, 129, 0.4);
+            border-radius: var(--radius-lg);
+            background: rgba(16, 185, 129, 0.05);
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover, .upload-area.dragover { border-color: var(--primary); background: rgba(16, 185, 129, 0.1); }
+
+        .upload-icon { font-size: 48px; color: var(--primary); margin-bottom: 16px; transition: transform 0.3s ease; }
+        
+        .upload-area:hover .upload-icon { transform: scale(1.1) translateY(-5px); }
+
+        .upload-text { font-weight: 600; font-size: 1.1rem; margin-bottom: 8px; pointer-events: none; }
+        .upload-subtext { color: var(--text-muted); font-size: 0.9rem; pointer-events: none; }
+
+        #file-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+        .preview-container { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .preview-container::-webkit-scrollbar { display: none; }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: var(--glass-border);
+            flex-shrink: 0;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .btn {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
         }
 
-        .photo-btn:active {
-            transform: scale(0.98);
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #059669);
+            color: #fff;
+            box-shadow: 0 4px 14px var(--primary-glow);
         }
 
-        .images-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
+        .btn-primary:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--primary-glow);
         }
 
-        .image-card {
+        .btn-primary:not(:disabled):active { transform: translateY(1px); }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text-main);
+            border: var(--glass-border);
+        }
+
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+
+        #screen-loading { align-items: center; justify-content: center; min-height: 60vh; }
+
+        .loader {
             position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            aspect-ratio: 4/3;
-            background: #333;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .image-card img {
+        .loader-ring {
+            position: absolute;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-        }
-
-        .remove-img-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0,0,0,0.7);
-            color: white;
-            border: none;
-            width: 28px;
-            height: 28px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-weight: bold;
+            border: 4px solid transparent;
+            border-top-color: var(--primary);
+            animation: spin 1.5s linear infinite;
         }
 
-        .add-more-card {
-            border: 2px dashed #555;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            cursor: pointer;
+        .loader-ring:nth-child(2) {
+            width: 80%;
+            height: 80%;
+            border-top-color: #34d399;
+            animation: spin-reverse 2s linear infinite;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
+        .loader-icon { font-size: 40px; color: var(--primary); animation: pulse 2s ease infinite; }
 
-        .secondary-btn {
-            background: #333;
-            border: 1px solid #444;
-            flex: 1;
-        }
-
-        .primary-btn {
-            flex: 2;
-        }
-
-        .loading-container {
+        .loading-text {
+            margin-top: 32px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
             text-align: center;
-            padding: 40px 20px;
+            animation: pulse 2s ease infinite;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #333;
-            border-top: 5px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px auto;
-        }
+        .loading-subtext { color: var(--text-muted); text-align: center; margin-top: 8px; }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin-reverse { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(0.95); } }
 
-        #loadingSubtext {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 10px;
-        }
-
-        .tag-list {
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 16px;
             display: flex;
-            flex-wrap: wrap;
+            align-items: center;
             gap: 8px;
-            margin-bottom: 20px;
         }
 
-        .tag {
-            background: rgba(76, 175, 80, 0.1);
-            color: var(--primary);
-            border: 1px solid rgba(76, 175, 80, 0.2);
-            padding: 6px 14px;
+        .section-title i { color: var(--primary); }
+
+        .ingredients-list { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .ingredient-pill {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.95rem;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease-out backwards;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
+
+        .recipes-container { display: flex; flex-direction: column; gap: 20px; }
 
         .recipe-card {
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.03);
+            background: var(--surface);
+            border: var(--glass-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            transform-origin: top;
+            animation: fadeIn 0.5s ease-out backwards;
         }
 
-        .recipe-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
+        .recipe-card:hover { transform: translateY(-4px); border-color: rgba(16, 185, 129, 0.4); }
 
-        .recipe-meta {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-            display: flex;
-            gap: 15px;
-        }
+        .recipe-header { padding: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
 
-        .steps-list {
-            padding-left: 20px;
-            color: var(--text-muted);
+        .recipe-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 8px; color: #fff; }
+
+        .recipe-meta { display: flex; gap: 16px; color: var(--text-muted); font-size: 0.9rem; }
+
+        .recipe-meta-item { display: flex; align-items: center; gap: 6px; }
+
+        .recipe-meta-item i { color: var(--primary); }
+
+        .recipe-body { padding: 20px; background: rgba(0, 0, 0, 0.2); }
+
+        .recipe-steps { list-style: none; counter-reset: steps-counter; }
+
+        .recipe-steps li {
+            position: relative;
+            padding-left: 36px;
+            margin-bottom: 16px;
+            color: #cbd5e1;
+            line-height: 1.5;
             font-size: 0.95rem;
         }
 
-        .steps-list li {
-            margin-bottom: 10px;
-            line-height: 1.5;
+        .recipe-steps li:last-child { margin-bottom: 0; }
+
+        .recipe-steps li::before {
+            counter-increment: steps-counter;
+            content: counter(steps-counter);
+            position: absolute;
+            left: 0;
+            top: -2px;
+            width: 24px;
+            height: 24px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
         }
 
-        #fileInput { display: none; }
+        .action-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Chef Nevera 👨‍🍳</h1>
-        <div class="brand-logo">LSF</div>
+        <div class="header-title">Nevera Inteligente</div>
+        <div class="logo">LSF</div>
     </header>
 
-    <div class="scroll-container">
-        <div class="container">
-
-            <input type="file" id="fileInput" accept="image/*" multiple>
-
-            <div id="screen-home" class="screen active">
-                <div class="welcome-card">
-                    <h2>¿No sabes qué cocinar?</h2>
-                    <p>Saca fotos de tu nevera o despensa y la Inteligencia Artificial te dirá qué preparar.</p>
-                    <button class="photo-btn" onclick="triggerUpload()">
-                        📸 Sacar / Subir Fotos
-                    </button>
-                </div>
+    <main>
+        <section id="screen-home" class="screen active">
+            <div class="hero">
+                <h1>¿Qué cocinamos hoy?</h1>
+                <p>Sube fotos de tu nevera y la IA creará platos deliciosos.</p>
             </div>
 
-            <div id="screen-preview" class="screen">
-                <div class="images-grid" id="previewGrid"></div>
-                <div class="action-buttons">
-                    <button class="photo-btn secondary-btn" onclick="resetApp()">🗑️ Borrar</button>
-                    <button class="photo-btn primary-btn" onclick="analyzeImages()">✨ ¡Generar Recetas!</button>
+            <div class="glass-panel">
+                <div class="upload-area" id="upload-area">
+                    <i class="ph ph-camera upload-icon"></i>
+                    <div class="upload-text">Toca para hacer foto</div>
+                    <div class="upload-subtext">del interior de la nevera</div>
+                    <input type="file" id="file-input" multiple accept="image/*" capture="environment">
                 </div>
+                
+                <div class="preview-container" id="preview-container" style="display: none; margin-top: 16px;">
+                    </div>
             </div>
 
-            <div id="screen-loading" class="screen">
-                <div class="loading-container">
-                    <div class="spinner"></div>
-                    <h2>Cocinando ideas...</h2>
-                    <p id="loadingSubtext">Procesando imágenes...</p>
-                </div>
+            <button id="btn-analyze" class="btn btn-primary" disabled>
+                <i class="ph-bold ph-magic-wand"></i> Analizar Ingredientes
+            </button>
+        </section>
+
+        <section id="screen-loading" class="screen">
+            <div class="loader">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <i class="ph-fill ph-brain loader-icon"></i>
+            </div>
+            <div class="loading-text">Analizando imágenes...</div>
+            <div class="loading-subtext" id="loading-subtext">Detectando ingredientes mágicos...</div>
+        </section>
+
+        <section id="screen-results" class="screen">
+            <div class="glass-panel">
+                <h2 class="section-title"><i class="ph-fill ph-carrot"></i> Ingredientes Detectados</h2>
+                <div class="ingredients-list" id="ingredients-list">
+                    </div>
             </div>
 
-            <div id="screen-results" class="screen">
-                <h3 style="margin-bottom: 10px; color: var(--text-muted);">Ingredientes detectados:</h3>
-                <div class="tag-list" id="detectedIngredients"></div>
+            <div class="glass-panel" style="padding: 0; background: transparent; border: none; box-shadow: none; backdrop-filter: none;">
+                <h2 class="section-title"><i class="ph-fill ph-cooking-pot"></i> Recetas Sugeridas</h2>
+                <div class="recipes-container" id="recipes-container">
+                    </div>
+            </div>
 
-                <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Recetas sugeridas:</h3>
-                <div id="recipesContainer"></div>
-
-                <button class="photo-btn" onclick="resetApp()" style="margin-top: 20px;">
-                    ⬅️ Volver a empezar
+            <div class="action-buttons">
+                <button id="btn-more" class="btn btn-primary">
+                    <i class="ph-bold ph-plus-circle"></i> Generar otras 3 recetas
+                </button>
+                <button id="btn-back" class="btn btn-secondary">
+                    <i class="ph-bold ph-arrow-left"></i> Volver al inicio
                 </button>
             </div>
-
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script>
-        let state = {
-            images: [], 
-            ingredients: [],
-            recipes: []
+        // --- State Management ---
+        const state = {
+            images: [],       // Base64 image data
+            ingredients: [],  // Currently detected ingredients
+            hasGeneratedMore: false
         };
 
-        const fileInput = document.getElementById('fileInput');
-        const previewGrid = document.getElementById('previewGrid');
-        const loadingSubtext = document.getElementById('loadingSubtext');
+        // --- DOM Elements ---
+        const screens = {
+            home: document.getElementById('screen-home'),
+            loading: document.getElementById('screen-loading'),
+            results: document.getElementById('screen-results')
+        };
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(`screen-${screenId}`).classList.add('active');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const btnAnalyze = document.getElementById('btn-analyze');
+        const ingredientsList = document.getElementById('ingredients-list');
+        const recipesContainer = document.getElementById('recipes-container');
+        const btnMore = document.getElementById('btn-more');
+        const btnBack = document.getElementById('btn-back');
+        const loadingSubtext = document.getElementById('loading-subtext');
+
+        // --- Navigation ---
+        function showScreen(screenName) {
+            Object.values(screens).forEach(screen => screen.classList.remove('active'));
+            screens[screenName].classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function triggerUpload() {
-            fileInput.click();
-        }
+        // --- Drag & Drop & File Selection ---
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
 
-        // Sistema de auto-compresión para saltarse el tope de 4.5MB de Vercel
-        function compressImage(file) {
-            return new Promise((resolve) => {
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+        });
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+        fileInput.addEventListener('change', handleFilesEvent, false);
+
+        function handleDrop(e) { handleFiles(e.dataTransfer.files); }
+        function handleFilesEvent(e) { handleFiles(e.target.files); }
+
+        // Utility to compress image before sending (Crucial for mobile data)
+        async function compressImage(file, maxSize = 800) {
+            // Si es un HEIC (iPhone) usamos la librería heic2any para convertir a blob jpeg primero.
+            if (file.name.toLowerCase().endsWith('.heic') || file.type === 'image/heic') {
+                try {
+                    const blob = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.8 });
+                    file = Array.isArray(blob) ? blob[0] : blob;
+                } catch (e) {
+                    console.error("Error HEIC:", e);
+                    throw new Error("No se pudo decodificar el archivo HEIC. Intenta con un JPG.");
+                }
+            }
+
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = function(event) {
+                reader.onload = (event) => {
                     const img = new Image();
                     img.src = event.target.result;
-                    img.onload = function() {
+                    img.onload = () => {
                         const canvas = document.createElement('canvas');
                         let width = img.width;
                         let height = img.height;
 
-                        const MAX_SIZE = 1024;
                         if (width > height) {
-                            if (width > MAX_SIZE) {
-                                height *= MAX_SIZE / width;
-                                width = MAX_SIZE;
-                            }
+                            if (width > maxSize) { height *= maxSize / width; width = maxSize; }
                         } else {
-                            if (height > MAX_SIZE) {
-                                width *= MAX_SIZE / height;
-                                height = MAX_SIZE;
-                            }
+                            if (height > maxSize) { width *= maxSize / height; height = maxSize; }
                         }
 
                         canvas.width = width;
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-
-                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                        resolve(compressedBase64);
-                    }
+                        
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                        resolve({
+                            mimeType: 'image/jpeg',
+                            data: dataUrl.split(',')[1],
+                            fullDataUrl: dataUrl
+                        });
+                    };
+                    img.onerror = () => reject(new Error("El archivo no parece ser una imagen válida."));
                 };
+                reader.onerror = () => reject(new Error("Fallo al leer la imagen de memoria."));
             });
         }
 
-        fileInput.addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length === 0) return;
+        async function handleFiles(files) {
+            if(files.length === 0) return;
+            const uploadText = document.querySelector('.upload-text');
+            const originalText = uploadText.innerHTML;
 
             for (let file of files) {
-                const compressedBase64 = await compressImage(file);
-                state.images.push({
-                    mimeType: 'image/jpeg',
-                    data: compressedBase64.split(',')[1] 
-                });
-            }
-
-            renderPreview();
-            showScreen('preview');
-            fileInput.value = ''; 
-        });
-
-        function renderPreview() {
-            previewGrid.innerHTML = '';
-            
-            state.images.forEach((img, index) => {
-                const card = document.createElement('div');
-                card.className = 'image-card';
-                card.innerHTML = `
-                    <img src="data:${img.mimeType};base64,${img.data}">
-                    <button class="remove-img-btn" onclick="removeImage(${index})">×</button>
-                `;
-                previewGrid.appendChild(card);
-            });
-
-            const addMore = document.createElement('div');
-            addMore.className = 'image-card add-more-card';
-            addMore.innerHTML = `<span>+ Añadir más</span>`;
-            addMore.onclick = triggerUpload;
-            previewGrid.appendChild(addMore);
-        }
-
-        function removeImage(index) {
-            state.images.splice(index, 1);
-            if (state.images.length === 0) {
-                resetApp();
-            } else {
-                renderPreview();
+                if(file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.heic')) {
+                    try {
+                        uploadText.innerHTML = '<i class="ph-bold ph-spinner ph-spin"></i> Procesando foto de ' + (file.size / 1024 / 1024).toFixed(1) + 'MB...';
+                        
+                        const compressed = await compressImage(file, 800);
+                        state.images.push({ mimeType: compressed.mimeType, data: compressed.data });
+                        
+                        const img = document.createElement('img');
+                        img.src = compressed.fullDataUrl;
+                        img.classList.add('image-preview');
+                        previewContainer.appendChild(img);
+                        
+                        previewContainer.style.display = 'flex';
+                        btnAnalyze.disabled = false;
+                    } catch (e) {
+                        alert("Problema con una foto: " + e.message);
+                    } finally {
+                        uploadText.innerHTML = originalText;
+                    }
+                }
             }
         }
 
-        function resetApp() {
-            state = { images: [], ingredients: [], recipes: [] };
-            fileInput.value = '';
-            showScreen('home');
-        }
-
-        async function fetchRecipesAndIngredients() {
-            const messages = ["Reduciendo imagen...", "Buscando ingredientes...", "Pensando combinaciones...", "Redactando recetas..."];
+        // --- AI API Call via Serverless Proxy ---
+        async function fetchRecipesAndIngredients(isMore = false) {
+            const messages = ["Procesando imágenes...", "Buscando ingredientes...", "Pensando combinaciones...", "Redactando recetas..."];
             let msgIdx = 0;
             const msgInterval = setInterval(() => {
                 loadingSubtext.innerText = messages[++msgIdx % messages.length];
             }, 2000);
 
-            let promptContext = `Analiza estas fotos del contenido de una nevera o despensa. Devuelve UNICAMENTE un objeto JSON válido, sin textos antes ni después, ni bloques de código markdown.
-            Formato exacto:
-            {
-              "ingredients": ["ingrediente1", "ingrediente2"],
-              "recipes": [
-                {
-                  "title": "Nombre de la receta",
-                  "prep_time": "30 min",
-                  "steps": ["paso 1", "paso 2"]
-                }
-              ]
-            }`;
+            let promptContext = `Analiza estas fotos del contenido de una nevera. Devuelve UNICAMENTE un objeto JSON válido.
+            1. En 'ingredients' pon array strings con TODOS los ingredientes.
+            2. En 'recipes' pon array de 3 objetos con 'title', 'prep_time', 'steps' (array strings).`;
+            
+            if (isMore) {
+                promptContext = `A partir de: ${state.ingredients.join(', ')}. Devuelve UNICAMENTE JSON con 'recipes' conteniendo 3 NUEVAS recetas distintas con 'title', 'prep_time', 'steps'.`;
+            }
 
             try {
                 let parts = [{ text: promptContext }];
-                state.images.forEach(img => {
-                    parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
-                });
+                if (!isMore) {
+                    state.images.forEach(img => {
+                        parts.push({ inlineData: { mimeType: img.mimeType, data: img.data } });
+                    });
+                }
 
+                // --- LLAMADA AL PROXY SEGURO EN VERCEL ---
                 const response = await fetch('/api/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -471,12 +571,13 @@
                     })
                 });
 
-                if (!response.ok) throw new Error("Error en el servidor");
-
                 const data = await response.json();
                 
-                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content || !data.candidates[0].content.parts || !data.candidates[0].content.parts[0]) {
-                     throw new Error("La IA no detectó comida válida o no devolvió una respuesta correcta.");
+                if (!response.ok) {
+                    let errMsg = "Vercel Code: " + response.status;
+                    if (data.details && data.details.error && data.details.error.message) errMsg = data.details.error.message;
+                    else if (data.error) errMsg = data.error;
+                    throw new Error("La IA no pudo procesarlo: " + errMsg);
                 }
 
                 const responseText = data.candidates[0].content.parts[0].text;
@@ -494,50 +595,73 @@
             }
         }
 
-        async function analyzeImages() {
-            if (state.images.length === 0) {
-                alert("Por favor, sube al menos una foto.");
-                return;
-            }
-            showScreen('loading');
-            const result = await fetchRecipesAndIngredients();
-            
-            if (result) {
-                state.ingredients = result.ingredients || [];
-                state.recipes = result.recipes || [];
-                renderResults();
-                showScreen('results');
-            }
+        // --- Render UI ---
+        function renderIngredients(ingredients) {
+            ingredientsList.innerHTML = '';
+            ingredients.forEach((ing, i) => {
+                const el = document.createElement('div');
+                el.className = 'ingredient-pill';
+                el.style.animationDelay = `${i * 0.05}s`;
+                el.innerHTML = `<i class="ph-bold ph-check"></i> ${ing}`;
+                ingredientsList.appendChild(el);
+            });
         }
 
-        function renderResults() {
-            const tagsContainer = document.getElementById('detectedIngredients');
-            tagsContainer.innerHTML = '';
-            state.ingredients.forEach(ing => {
-                const span = document.createElement('span');
-                span.className = 'tag';
-                span.innerText = ing;
-                tagsContainer.appendChild(span);
-            });
-
-            const recipesContainer = document.getElementById('recipesContainer');
-            recipesContainer.innerHTML = '';
-            state.recipes.forEach(recipe => {
+        function renderRecipes(recipes, append = false) {
+            if (!append) recipesContainer.innerHTML = '';
+            
+            recipes.forEach((rec, index) => {
                 const card = document.createElement('div');
                 card.className = 'recipe-card';
+                const delayIndex = append ? index + 3 : index;
+                card.style.animationDelay = `${delayIndex * 0.15}s`;
+
                 card.innerHTML = `
-                    <div class="recipe-title">${recipe.title}</div>
-                    <div class="recipe-meta">
-                        <span>⏱️ ${recipe.prep_time}</span>
-                        <span>🥣 Fácil</span>
+                    <div class="recipe-header">
+                        <div class="recipe-title">${rec.title}</div>
+                        <div class="recipe-meta">
+                            <div class="recipe-meta-item"><i class="ph-bold ph-clock"></i> ${rec.prep_time}</div>
+                        </div>
                     </div>
-                    <ol class="steps-list">
-                        ${recipe.steps.map(step => `<li>${step}</li>`).join('')}
-                    </ol>
+                    <div class="recipe-body">
+                        <ul class="recipe-steps">${rec.steps.map(step => `<li>${step}</li>`).join('')}</ul>
+                    </div>
                 `;
                 recipesContainer.appendChild(card);
             });
         }
+
+        // --- Event Listeners ---
+        btnAnalyze.addEventListener('click', async () => {
+            showScreen('loading');
+            const result = await fetchRecipesAndIngredients(false);
+            if(result) {
+                state.ingredients = result.ingredients || [];
+                renderIngredients(state.ingredients);
+                renderRecipes(result.recipes || []);
+                showScreen('results');
+            }
+        });
+
+        btnMore.addEventListener('click', async () => {
+            if(state.hasGeneratedMore) return;
+            btnMore.disabled = true;
+            btnMore.innerHTML = '<i class="ph-bold ph-spinner ph-spin"></i> Generando...';
+            
+            const result = await fetchRecipesAndIngredients(true);
+            if(result && result.recipes) {
+                renderRecipes(result.recipes, true);
+                state.hasGeneratedMore = true;
+                btnMore.style.display = 'none';
+            } else {
+                btnMore.disabled = false;
+                btnMore.innerHTML = '<i class="ph-bold ph-plus-circle"></i> Generar otras 3 recetas';
+            }
+        });
+
+        // Forçar recarga para reiniciar estado totalmente
+        btnBack.addEventListener('click', () => { location.reload(); });
+
     </script>
 </body>
 </html>
