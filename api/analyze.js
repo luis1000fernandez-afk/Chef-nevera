@@ -10,9 +10,9 @@ export default async function handler(req, res) {
     try {
         const { contents, generationConfig } = req.body;
 
-        // 3. Llamamos a Google desde el servidor
+        // 3. Llamamos a Google desde el servidor usando gemini-1.5-flash (el 2.0 a veces tiene límite 0 en cuentas gratuitas en Europa)
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
