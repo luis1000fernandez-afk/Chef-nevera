@@ -473,38 +473,40 @@
                 }
             }
 
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
+            return new Promise(async (resolve, reject) => {
+                try {
+                    // Method more efficient than FileReader + DataURL
+                    const imageBitmap = await createImageBitmap(file);
+                    let width = imageBitmap.width;
+                    let height = imageBitmap.height;
 
-                        if (width > height) {
-                            if (width > maxSize) { height *= maxSize / width; width = maxSize; }
-                        } else {
-                            if (height > maxSize) { width *= maxSize / height; height = maxSize; }
-                        }
+                    if (width > height) {
+                        if (width > maxSize) { height *= maxSize / width; width = maxSize; }
+                    } else {
+                        if (height > maxSize) { width *= maxSize / height; height = maxSize; }
+                    }
 
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                        resolve({
-                            mimeType: 'image/jpeg',
-                            data: dataUrl.split(',')[1],
-                            fullDataUrl: dataUrl
-                        });
-                    };
-                    img.onerror = () => reject(new Error("El archivo no parece ser una imagen válida."));
-                };
-                reader.onerror = () => reject(new Error("Fallo al leer la imagen de memoria."));
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(imageBitmap, 0, 0, width, height);
+
+                    // Liberamos la memoria del bitmap original (que en fotos de 16MB es masivo)
+                    imageBitmap.close();
+
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    // Ayudar al garbage collector
+                    canvas.width = 0; canvas.height = 0;
+
+                    resolve({
+                        mimeType: 'image/jpeg',
+                        data: dataUrl.split(',')[1],
+                        fullDataUrl: dataUrl
+                    });
+                } catch (err) {
+                    reject(new Error("Fallo de memoria al procesar la imagen (" + err.message + ")"));
+                }
             });
         }
 
@@ -665,3 +667,4 @@
     </script>
 </body>
 </html>
+
