@@ -10,9 +10,9 @@ export default async function handler(req, res) {
     try {
         const { contents, generationConfig } = req.body;
 
-        // 3. Llamamos a Google desde el servidor usando gemini-1.5-flash (el 2.0 a veces tiene límite 0 en cuentas gratuitas en Europa)
+        // 3. Llamamos a Google desde el servidor usando la versión estable v1 para gemini-1.5-flash
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -32,3 +32,4 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'Error interno en el servidor proxy Vercel', message: error.message });
     }
 }
+
