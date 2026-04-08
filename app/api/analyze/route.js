@@ -9,7 +9,7 @@ import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 
 // Configuración del modelo
-const MODEL_NAME = 'gemini-1.5-flash';
+const MODEL_NAME = 'gemini-1.5-flash-latest';
 
 // Inicializar cliente Gemini
 function getClient() {
