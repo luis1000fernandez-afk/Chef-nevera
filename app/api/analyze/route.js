@@ -1,37 +1,83 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+/**
+ * API Route: /api/analyze (Corregida)
+ */
+
+import { GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 
-// Nombre del modelo estable
-const MODEL_NAME = "gemini-1.5-flash";
+// Configuración del modelo estable
+// Se usa gemini-1.5-flash para máxima compatibilidad y velocidad
+const MODEL_NAME = 'gemini-1.5-flash';
 
-export async function POST(req) {
+// Inicializar cliente Gemini con el SDK correcto (@google/genai)
+function getClient() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY no configurada. Por favor, añádela en Vercel.');
+  }
+  return new GoogleGenAI({ apiKey });
+}
+
+export async function POST(request) {
   try {
-    const { images } = await req.json();
-    
-    // Inicializamos la IA con la llave que tienes en Vercel
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+    const body = await request.json();
+    const { images, regenerate, ingredientes: existingIngredients } = body;
 
-    // Preparamos las fotos
+    const ai = getClient();
+
+    // 1. CASO: REGENERAR RECETAS (Añadir 3 nuevas a las anteriores)
+    if (regenerate && existingIngredients) {
+      const prompt = `Con estos ingredientes: ${existingIngredients.join(', ')}.
+      Genera 3 recetas distintas a las habituales.
+      Responde SOLO JSON: { "recetas": [{ "nombre": "", "ingredientes": [], "pasos": [] }] }`;
+
+      const response = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      });
+
+      const text = response.text.trim().replace(/```json/g, "").replace(/```/g, "");
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      return NextResponse.json(JSON.parse(jsonMatch ? jsonMatch[0] : text));
+    }
+
+    // 2. CASO: ANÁLISIS COMPLETO (Ingredientes + Recetas Iniciales)
+    if (!images || images.length === 0) {
+      return NextResponse.json({ error: 'No se enviaron imágenes.' }, { status: 400 });
+    }
+
     const imageParts = images.map((img) => ({
-      inlineData: {
-        data: img.data,
-        mimeType: img.mimeType,
-      },
+      inlineData: { data: img.data, mimeType: img.mimeType },
     }));
 
-    const prompt = "Analiza estas imágenes de una nevera. Lista los ingredientes visibles y sugiere 3 recetas. Responde SOLO en formato JSON con esta estructura: { 'ingredients': [], 'recipes': [{ 'name': '', 'description': '' }] }";
+    const prompt = `Analiza la nevera y detecta ingredientes. Luego sugiere 3 recetas.
+    Responde SOLO JSON con esta estructura exacta (en español):
+    {
+      "ingredientes": ["tomate", "queso"],
+      "recetas": [
+        {
+          "nombre": "Ensalada Caprese",
+          "ingredientes": ["2 tomates", "100g queso"],
+          "pasos": ["Cortar", "Mezclar"]
+        }
+      ]
+    }`;
 
-    const result = await model.generateContent([prompt, ...imageParts]);
-    const response = await result.response;
-    const text = response.text();
-    
-    // Limpiamos el texto por si la IA devuelve símbolos de Markdown (```json)
-    const cleanText = text.replace(/```json/g, "").replace(/```/g, "").trim();
-    
-    return NextResponse.json(JSON.parse(cleanText));
+    const response = await ai.models.generateContent({
+      model: MODEL_NAME,
+      contents: [{ role: 'user', parts: [{ text: prompt }, ...imageParts] }],
+    });
+
+    const text = response.text.trim().replace(/```json/g, "").replace(/```/g, "");
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const data = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+
+    return NextResponse.json(data);
+
   } catch (error) {
-    console.error("Error en Gemini:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Error en API:', error);
+    return NextResponse.json({ 
+      error: `Error de IA: ${error.message}. Verifica que tu API KEY sea correcta.` 
+    }, { status: 500 });
   }
 }
